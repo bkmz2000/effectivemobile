@@ -1,0 +1,189 @@
+definitions:
+  db.Song:
+    description: Song model
+    properties:
+      group:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      name:
+        type: string
+      release_date:
+        type: string
+      text:
+        type: string
+    type: object
+  server.ErrorResponse:
+    description: Error response model
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /song:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a song from the database
+      parameters:
+      - description: Song ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Delete a song
+      tags:
+      - songs
+    get:
+      consumes:
+      - application/json
+      description: Filter songs by group, name, and date range
+      parameters:
+      - description: Group
+        in: query
+        name: group
+        type: string
+      - description: Name
+        in: query
+        name: name
+        type: string
+      - description: Date After
+        in: query
+        name: date_after
+        type: string
+      - description: Date Before
+        in: query
+        name: date_before
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/db.Song'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Filter songs
+      tags:
+      - songs
+    post:
+      consumes:
+      - application/json
+      description: Add a new song to the database
+      parameters:
+      - description: Song
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/db.Song'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/db.Song'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Add a new song
+      tags:
+      - songs
+    put:
+      consumes:
+      - application/json
+      description: Update an existing song
+      parameters:
+      - description: Song
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/db.Song'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Song'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Update a song
+      tags:
+      - songs
+  /text:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the text of a song by group and name
+      parameters:
+      - description: Group
+        in: query
+        name: group
+        required: true
+        type: string
+      - description: Name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Verse Index
+        in: query
+        name: verse
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Get song text
+      tags:
+      - songs
+swagger: "2.0"
